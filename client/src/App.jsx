@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
@@ -16,8 +17,18 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import NotFound from "./pages/NotFound";
+import PublicRoute from './components/PublicRoute';
+import { useAuthStore } from "./stores/authStore";
+
 
 function App() {
+
+  const initializeAuth = useAuthStore((state) => state.initializeAuth);
+
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
   return (
     <BrowserRouter>
       <Header />
@@ -28,8 +39,8 @@ function App() {
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
+          <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
           {/* Admin routes */}
@@ -39,7 +50,7 @@ function App() {
           <Route path="/admin/users" element={<ProtectedRoute adminOnly><Users /></ProtectedRoute>} />
 
           {/* Fallback */}
-          <Route path="*" element={<NotFound/>} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

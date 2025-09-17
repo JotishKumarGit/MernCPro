@@ -52,6 +52,7 @@ function Register() {
       formDataToSend.append("name", formData.name);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
+      formDataToSend.append("profilePic", formData.password);
       if (formData.profilePic) {
         formDataToSend.append("profilePic", formData.profilePic);
       }
@@ -79,16 +80,14 @@ function Register() {
 
   return (
     <div
-      className={`container-fluid d-flex justify-content-center py-2 align-items-center min-vh-100 ${
-        theme === "dark" ? "bg-dark text-light" : "bg-light"
-      }`}
+      className={`container-fluid d-flex justify-content-center py-2 align-items-center min-vh-100 ${theme === "dark" ? "bg-dark text-light" : "bg-light"
+        }`}
     >
       <div className="row w-100 justify-content-center">
         <div className="col-11 col-sm-8 col-md-6 col-lg-5 col-xl-4">
           <div
-            className={`card shadow p-4 ${
-              theme === "dark" ? "bg-secondary text-light" : "bg-white"
-            }`}
+            className={`card shadow p-4 ${theme === "dark" ? "bg-secondary text-light" : "bg-white"
+              }`}
           >
             <h2 className="text-center mb-4">Create Account</h2>
 
@@ -96,80 +95,40 @@ function Register() {
               {/* Full Name */}
               <div className="mb-3">
                 <label className="form-label">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  className="form-control"
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChange={handleChange}
-                />
+                <input type="text"
+                  name="name" className="form-control" placeholder="Enter your name" value={formData.name} onChange={handleChange} />
               </div>
 
               {/* Email */}
               <div className="mb-3">
                 <label className="form-label">Email Address</label>
                 <input
-                  type="email"
-                  name="email"
-                  className="form-control"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
+                  type="email" name="email" className="form-control" placeholder="Enter your email" value={formData.email} onChange={handleChange} />
               </div>
 
               {/* Password */}
               <div className="mb-3">
                 <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  name="password"
-                  className="form-control"
-                  placeholder="Enter password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <input type="password" name="password" className="form-control" placeholder="Enter password" value={formData.password} onChange={handleChange} />
               </div>
 
               {/* Confirm Password */}
               <div className="mb-3">
                 <label className="form-label">Confirm Password</label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  className="form-control"
-                  placeholder="Confirm password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                />
+                <input type="password" name="confirmPassword" className="form-control" placeholder="Confirm password" value={formData.confirmPassword} onChange={handleChange} />
               </div>
 
               {/* Profile Pic */}
               <div className="mb-3">
                 <label className="form-label">Profile Picture</label>
-                <input
-                  type="file"
-                  name="profilePic"
-                  className="form-control"
-                  accept="image/*"
-                  onChange={handleChange}
-                />
+                <input type="file" name="profilePic" className="form-control" accept="image/*" onChange={handleChange} />
               </div>
 
               {/* Submit Button */}
-              <button
-                type="submit"
-                className="btn btn-primary w-100"
-                disabled={loading}
-              >
-                {loading ? "Registering..." : "Register"}
-              </button>
+              <button type="submit" className="btn btn-primary w-100" disabled={loading}>{loading ? "Registering..." : "Register"}</button>
             </form>
 
-            <p className="text-center mt-3">
-              Already have an account? <Link to="/login">Login</Link>
-            </p>
+            <p className="text-center mt-3">Already have an account? <Link to="/login">Login</Link></p>
           </div>
         </div>
       </div>

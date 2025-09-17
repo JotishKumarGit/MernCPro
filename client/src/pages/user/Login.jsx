@@ -11,11 +11,7 @@ export default function AuthForms() {
   const navigate = useNavigate();
 
   const [step, setStep] = useState("login"); // login | forgot | reset
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [form, setForm] = useState({email: "",password: "",confirmPassword: "",});
   const [resetToken, setResetToken] = useState("");
 
   // 🔹 Input change
@@ -33,7 +29,7 @@ export default function AuthForms() {
 
       if (res.data?.success) {
         login(res.data.user, res.data.token);
-        localStorage.setItem("token", res.data.token);
+       localStorage.setItem("user", JSON.stringify(res.data.user));
         toast.success("Login successful 🎉");
         navigate("/"); // go to home
       } else {
@@ -53,7 +49,7 @@ export default function AuthForms() {
       });
       if (res.data?.success) {
         setResetToken(res.data.resetUrl.split("/").pop()); // extract token
-        toast.success("Reset link generated ✅ (check console)");
+        toast.success("Reset link generated (check console)");
         console.log("Reset URL:", res.data.resetUrl);
         setStep("reset");
       } else {
@@ -89,60 +85,29 @@ export default function AuthForms() {
   };
 
   return (
-    <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ background: "linear-gradient(135deg, #667eea, #764ba2)" }}
-    >
+    <div className="d-flex justify-content-center align-items-center vh-100" style={{ background: "linear-gradient(135deg, #667eea, #764ba2)" }}>
       <motion.div
         initial={{ opacity: 0, y: -60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7 }}
-        className="card shadow-lg p-4"
-        style={{ width: "380px", borderRadius: "20px" }}
+        className="card shadow-lg p-4" style={{ width: "380px", borderRadius: "20px" }}
       >
         <h3 className="text-center mb-4 text-primary fw-bold">
-          {step === "login"
-            ? "Login"
-            : step === "forgot"
-            ? "Forgot Password"
-            : "Reset Password"}
+          {step === "login" ? "Login" : step === "forgot" ? "Forgot Password" : "Reset Password"}
         </h3>
 
         {/* LOGIN FORM */}
         {step === "login" && (
           <form onSubmit={handleLogin}>
             <div className="mb-3">
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-                className="form-control"
-                required
+              <input type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} className="form-control" required
               />
             </div>
             <div className="mb-3">
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
+              <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} className="form-control" required />
             </div>
-            <button type="submit" className="btn btn-primary w-100 mb-2">
-              Login
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("forgot")}
-              className="btn btn-link w-100"
-            >
-              Forgot Password?
-            </button>
+            <button type="submit" className="btn btn-primary w-100 mb-2">Login</button>
+            <button type="button" onClick={() => setStep("forgot")} className="btn btn-link w-100">Forgot Password?</button>
           </form>
         )}
 
@@ -150,24 +115,9 @@ export default function AuthForms() {
         {step === "forgot" && (
           <form onSubmit={handleForgot}>
             <div className="mb-3">
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter registered email"
-                value={form.email}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
+              <input type="email" name="email" placeholder="Enter registered email" value={form.email} onChange={handleChange} className="form-control" required />
             </div>
-            <button type="submit" className="btn btn-warning w-100 mb-2">
-              Send Reset Link
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("login")}
-              className="btn btn-link w-100"
-            >
+            <button type="submit" className="btn btn-warning w-100 mb-2">Send Reset Link</button><button type="button" onClick={() => setStep("login")} className="btn btn-link w-100">
               Back to Login
             </button>
           </form>
@@ -178,36 +128,13 @@ export default function AuthForms() {
           <form onSubmit={handleReset}>
             <div className="mb-3">
               <input
-                type="password"
-                name="password"
-                placeholder="New Password"
-                value={form.password}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
+                type="password" name="password" placeholder="New Password" value={form.password} onChange={handleChange} className="form-control" required />
             </div>
             <div className="mb-3">
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirm New Password"
-                value={form.confirmPassword}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
+              <input type="password" name="confirmPassword" placeholder="Confirm New Password" value={form.confirmPassword} onChange={handleChange} className="form-control" required />
             </div>
-            <button type="submit" className="btn btn-success w-100 mb-2">
-              Reset Password
-            </button>
-            <button
-              type="button"
-              onClick={() => setStep("login")}
-              className="btn btn-link w-100"
-            >
-              Back to Login
-            </button>
+            <button type="submit" className="btn btn-success w-100 mb-2">Reset Password</button>
+            <button type="button" onClick={() => setStep("login")} className="btn btn-link w-100">Back to Login</button>
           </form>
         )}
       </motion.div>

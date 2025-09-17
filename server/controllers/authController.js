@@ -20,8 +20,9 @@ export const registerUser = async (req, res) => {
   // If multer uploaded a file
   if (req.file) {
     profilePic = req.file.filename; // or full path if you want
-  }
 
+  }
+  
   try {
     // Rest of your existing code, but now using profilePic from file
     let user = await User.findOne({ email });

@@ -21,8 +21,7 @@ export const protect = async (req, res, next) => {
   }
 };
 
-
-// ✅ Admin only: check if user is admin
+// Admin only: check if user is admin
 export const adminOnly = (req, res, next) => {
   if (req.user && req.user.role === 'admin') {
     next();

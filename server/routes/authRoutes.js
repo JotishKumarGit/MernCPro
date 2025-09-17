@@ -5,7 +5,7 @@ import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/register',  upload.single('profilePic'), registerUser);
+router.post('/register', upload.single('profilePic'), registerUser);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.post('/forgot-password', forgotPassword);
