@@ -3,3 +3,22 @@
   margin: 0;
   box-sizing: border-box;
 }
+
+/* This is for light and dark mode color */
+body.light {
+  background-color: #ffffff;
+  color: #212529;
+}
+
+body.dark {
+  background-color: #121212;
+  color: #f8f9fa;
+}
+
+.navbar-dark {
+  background-color: #212529 !important;
+}
+
+.navbar-light {
+  background-color: #f8f9fa !important;
+}

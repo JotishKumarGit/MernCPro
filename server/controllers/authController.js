@@ -38,6 +38,7 @@ export const registerUser = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000
     }).json({
       success: true,
+       message: "User registered successfully 🎉",
       user: {
         id: user._id,
         name: user.name,

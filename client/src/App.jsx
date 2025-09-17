@@ -15,7 +15,7 @@ import Users from "./pages/admin/Users";
 import ProtectedRoute from "./components/ProtectedRoute";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -39,7 +39,7 @@ function App() {
           <Route path="/admin/users" element={<ProtectedRoute adminOnly><Users /></ProtectedRoute>} />
 
           {/* Fallback */}
-          <Route path="*" element={<h2>Page Not Found</h2>} />
+          <Route path="*" element={<NotFound/>} />
         </Routes>
       </main>
       <Footer />

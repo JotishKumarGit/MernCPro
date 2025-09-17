@@ -2,13 +2,15 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
-  headers: { "Content-Type": "application/json" }
+  withCredentials: true,
 });
 
-// attach token from Zustand
-api.interceptors.request.use(config => {
+// attach token if exists
+api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
