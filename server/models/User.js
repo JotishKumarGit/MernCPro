@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   },
   profilePic: {
     type: String,
-    default: 'https://i.ibb.co/2kR2m6T/default-user.png' //  Default avatar
+    default: 'https://i.ibb.co/2kR2m6T/default-user.png'
   },
   role: {
     type: String,

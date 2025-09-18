@@ -17,38 +17,41 @@ export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   let profilePic;
 
-  // If multer uploaded a file
-  if (req.file) {
-    profilePic = req.file.filename; // or full path if you want
-
-  }
-  
   try {
-    // Rest of your existing code, but now using profilePic from file
-    let user = await User.findOne({ email });
-    if (user) return res.status(400).json({ message: 'User already exists' });
+    // If multer uploaded a file
+    if (req.file) {
+      profilePic = `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+    }
 
-    user = await User.create({ name, email, password, profilePic });
+    // Check if user already exists
+    let user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Create new user
+    user = await User.create({
+      name,email,password,profilePic, // if not provided, schema default will be used
+    });
 
     const token = generateToken(user);
 
-    res.status(201).cookie('token', token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    }).json({
-      success: true,
-       message: "User registered successfully 🎉",
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        profilePic: user.profilePic
-      },
-      token
-    });
+    res
+      .status(201)
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
+      .json({
+        success: true,
+        message: "User registered successfully 🎉",
+        user: {id: user._id,name: user.name,email: user.email,role: user.role,
+          profilePic: user.profilePic,
+        },
+        token,
+      });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -279,5 +282,3 @@ export const removeFromWishlist = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-// 

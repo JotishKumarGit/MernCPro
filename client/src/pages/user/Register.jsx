@@ -13,12 +13,9 @@ function Register() {
 
   // Form state
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    profilePic: null,
+    name: "",email: "",password: "",confirmPassword: "",profilePic: null,
   });
+
   const [loading, setLoading] = useState(false);
 
   // Handle input change
@@ -52,7 +49,6 @@ function Register() {
       formDataToSend.append("name", formData.name);
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
-      formDataToSend.append("profilePic", formData.password);
       if (formData.profilePic) {
         formDataToSend.append("profilePic", formData.profilePic);
       }
@@ -63,7 +59,7 @@ function Register() {
       });
 
       if (response?.data?.success) {
-        setUser(response.data.user);
+        
         localStorage.setItem("token", response.data.token);
         toast.success(response.data.message || "Registration successful! 🎉");
         navigate("/login");

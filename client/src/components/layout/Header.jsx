@@ -86,7 +86,7 @@ function Header() {
               ) : (
                 <li className="nav-item dropdown">
                   <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                    <img src={isAuthenticated ? user?.profilePic : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} alt="avatar" width="30" height="30" className="rounded-circle" />
+                    <img src={user?.profilePic || 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'} alt="avatar" width="30" height="30" className="rounded-circle" />
                   </a>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li><Link className="dropdown-item" to="/profile">Profile</Link></li>

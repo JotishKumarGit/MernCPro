@@ -20,7 +20,6 @@ import NotFound from "./pages/NotFound";
 import PublicRoute from './components/PublicRoute';
 import { useAuthStore } from "./stores/authStore";
 
-
 function App() {
 
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
