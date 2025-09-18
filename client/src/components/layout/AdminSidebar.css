@@ -1,0 +1,49 @@
+/* Sidebar Overlay for mobile */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1040;
+}
+
+/* Sidebar main container */
+.admin-sidebar {
+  position: fixed;
+  top: 110px; /* Adjust for sticky topbar height */
+  left: -250px;
+  width: 220px;
+  height: calc(100vh - 56px); /* Adjust for topbar */
+  overflow-y: auto;
+  padding: 1rem 0.5rem;
+  background-color: var(--bs-light);
+  transition: left 0.3s ease;
+  z-index: 1041;
+}
+
+.admin-sidebar.dark {
+  background-color: #212529;
+  color: white;
+}
+
+.admin-sidebar.open {
+  left: 0;
+}
+
+/* Nav Links */
+.nav-link {
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: #0d6efd !important;
+}
+
+.active-link {
+  background-color: #0d6efd;
+  color: white !important;
+  font-weight: bold;
+}

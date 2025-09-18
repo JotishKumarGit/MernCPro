@@ -257,3 +257,4 @@ export const generateInvoice = async (req, res) => {
     res.status(500).json({ message: 'Could not generate invoice' });
   }
 };
+
