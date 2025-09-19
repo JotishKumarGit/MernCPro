@@ -1,49 +1,52 @@
+// src/components/layout/AdminLayout.jsx
 import React, { useEffect, useState } from "react";
-import AdminSidebar from "./AdminSidebar";
+import AdminSidebar from "../admin/AdminSidebar";
+import AdminTopbar from "../admin/AdminTopbar";
 import { useThemeStore } from "../../stores/themeStore";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function AdminLayout({ children }) {
   const { theme } = useThemeStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // You can update this to match your topbar's fixed height
-  const TOPBAR_HEIGHT = 56; 
+  useEffect(() => {
+    AOS.init({ duration: 700, once: true });
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      if (!mobile) setSidebarOpen(false); // reset sidebar on desktop
+      if (!mobile) setSidebarOpen(false);
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  return (
-    <div className={`d-flex ${theme}`} style={{ minHeight: `calc(100vh - ${TOPBAR_HEIGHT}px)` }}>
-      {/* Sidebar */}
-      <AdminSidebar
-        isOpen={!isMobile || sidebarOpen}
-        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        isMobile={isMobile}
-        theme={theme}
-        topBarHeight={TOPBAR_HEIGHT}
-      />
+  const marginLeft = !isMobile ? "240px" : "0";
 
-      {/* Main Content */}
-      <main
-        className={`flex-grow-1 p-4 ${
-          theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"
-        }`}
-        style={{
-          marginLeft: !isMobile ? 220 : 0,
-          transition: "margin-left 0.3s ease",
-          minHeight: `calc(100vh - ${TOPBAR_HEIGHT}px)`,
-        }}
-      >
-        {children}
-      </main>
+  return (
+    <div className={`min-vh-100 ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"}`}>
+      {/* Optional: Backdrop for mobile */}
+      {isMobile && sidebarOpen && (
+        <div
+          className="position-fixed top-0 start-0 w-100 h-100 bg-black bg-opacity-50"
+          style={{ zIndex: 998 }}
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      <AdminSidebar isOpen={!isMobile || sidebarOpen} setIsOpen={setSidebarOpen} />
+
+      <div className="d-flex flex-column" style={{ marginLeft }}>
+        <AdminTopbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <main className="flex-grow-1 p-3 mt-5" data-aos="fade-up">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }

@@ -1,14 +1,25 @@
+// src/pages/admin/Dashboard.jsx
 import React from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
+import RevenueChart from "../../components/admin/RevenueChart";
+import StatsCards from "../../components/admin/StatsCards";
 
 function Dashboard() {
   return (
-    <AdminLayout>
-      <h2>📊 Admin Dashboard</h2>
-      <p>Welcome, Admin!</p>
 
-      {/* Later: Add stats cards, charts etc. */}
-    </AdminLayout>
+      <div className="container-fluid">
+        <h2 className="mb-3" data-aos="fade-down">📊 Admin Dashboard</h2>
+        <p data-aos="fade-right">Welcome, Admin! Manage your store here 🚀</p>
+
+        <StatsCards />
+
+        <div className="row mt-4">
+          <div className="col-md-12" data-aos="fade-up">
+            <RevenueChart />
+          </div>
+        </div>
+      </div>
+
   );
 }
 

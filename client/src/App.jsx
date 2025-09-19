@@ -1,7 +1,10 @@
-import {useEffect} from 'react';
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/layout/Header";
-import Footer from "./components/layout/Footer";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import "aos/dist/aos.css";
+
 import Home from "./pages/user/Home";
 import ProductDetails from "./pages/user/ProductDetails";
 import Cart from "./pages/user/Cart";
@@ -9,19 +12,23 @@ import Checkout from "./pages/user/Checkout";
 import Login from "./pages/user/Login";
 import Register from "./pages/user/Register";
 import Profile from "./pages/user/Profile";
+
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
 import Users from "./pages/admin/Users";
+
 import ProtectedRoute from "./components/ProtectedRoute";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import PublicRoute from "./components/PublicRoute";
 import NotFound from "./pages/NotFound";
-import PublicRoute from './components/PublicRoute';
+
 import { useAuthStore } from "./stores/authStore";
 
-function App() {
+// Layouts
+import UserLayout from "./components/layout/UserLayout";
+import AdminLayout from "./components/layout/AdminLayout";
 
+function App() {
   const initializeAuth = useAuthStore((state) => state.initializeAuth);
 
   useEffect(() => {
@@ -30,29 +37,25 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Header />
-      <main className="">
-        <Routes>
-          {/* User routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-          <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-          <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Routes>
+        {/* ✅ User Routes with UserLayout */}
+        <Route path="/"element={<UserLayout><Home /></UserLayout>}/>
+        <Route path="/product/:id"element={<UserLayout><ProductDetails /></UserLayout>}/>
+        <Route path="/cart"element={<UserLayout><Cart /></UserLayout>}/>
+        <Route path="/checkout"element={<UserLayout><ProtectedRoute><Checkout /></ProtectedRoute></UserLayout>}/>
+        <Route path="/login"element={<UserLayout><PublicRoute><Login /></PublicRoute></UserLayout>}/>
+        <Route path="/register"element={<UserLayout><PublicRoute><Register /></PublicRoute></UserLayout>}/>
+        <Route path="/profile"element={<UserLayout><ProtectedRoute><Profile /></ProtectedRoute></UserLayout>}/>
 
-          {/* Admin routes */}
-          <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly><Dashboard /></ProtectedRoute>} />
-          <Route path="/admin/products" element={<ProtectedRoute adminOnly><Products /></ProtectedRoute>} />
-          <Route path="/admin/orders" element={<ProtectedRoute adminOnly><Orders /></ProtectedRoute>} />
-          <Route path="/admin/users" element={<ProtectedRoute adminOnly><Users /></ProtectedRoute>} />
+        {/* ✅ Admin Routes with AdminLayout */}
+        <Route path="/admin/dashboard"element={<ProtectedRoute adminOnly><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>}/>
+        <Route path="/admin/products"element={<ProtectedRoute adminOnly><AdminLayout><Products /></AdminLayout></ProtectedRoute>}/>
+        <Route path="/admin/orders"element={<ProtectedRoute adminOnly><AdminLayout><Orders /></AdminLayout></ProtectedRoute>}/>
+        <Route path="/admin/users"element={<ProtectedRoute adminOnly><AdminLayout><Users /></AdminLayout></ProtectedRoute>}/>
 
-          {/* Fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
+        {/* Fallback */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </BrowserRouter>
   );
 }
