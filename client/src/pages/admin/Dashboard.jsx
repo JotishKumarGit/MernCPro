@@ -8,7 +8,7 @@ function Dashboard() {
   return (
 
       <div className="container-fluid">
-        <h2 className="mb-3" data-aos="fade-down">📊 Admin Dashboard</h2>
+        <h2 className="mb-3 pt-2" data-aos="fade-down">📊 Admin Dashboard</h2>
         <p data-aos="fade-right">Welcome, Admin! Manage your store here 🚀</p>
 
         <StatsCards />

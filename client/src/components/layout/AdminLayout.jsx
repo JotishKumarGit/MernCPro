@@ -5,7 +5,7 @@ import AdminTopbar from "../admin/AdminTopbar";
 import { useThemeStore } from "../../stores/themeStore";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+
 
 function AdminLayout({ children }) {
   const { theme } = useThemeStore();
@@ -29,7 +29,7 @@ function AdminLayout({ children }) {
   const marginLeft = !isMobile ? "240px" : "0";
 
   return (
-    <div className={`min-vh-100 ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"}`}>
+    <div className={`min-vh-100 text-start ${theme === "dark" ? "bg-dark text-light" : "bg-light text-dark"}`}>
       {/* Optional: Backdrop for mobile */}
       {isMobile && sidebarOpen && (
         <div

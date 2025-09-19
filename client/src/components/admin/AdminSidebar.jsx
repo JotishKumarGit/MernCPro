@@ -1,13 +1,25 @@
 // src/components/admin/AdminSidebar.jsx
-import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Package, ShoppingCart, Users } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { LayoutDashboard, ClipboardList , Package, ShoppingCart, Users, List, LogOut, Settings, BarChart } from "lucide-react";
+import { useAuthStore } from '../../stores/authStore';
 
 export default function AdminSidebar({ isOpen, setIsOpen }) {
+  const navigate = useNavigate();
+
+  const { user, logout, isAuthenticated } = useAuthStore();
+
   const links = [
     { to: "/admin/dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} /> },
     { to: "/admin/products", label: "Products", icon: <Package size={18} /> },
+    { to: "/admin/categories", label: "Categories", icon: <List size={18} /> },
     { to: "/admin/orders", label: "Orders", icon: <ShoppingCart size={18} /> },
     { to: "/admin/users", label: "Users", icon: <Users size={18} /> },
+    { to: "/admin/reports", label: "Reports", icon: <BarChart size={18} /> },
+    { to: "/admin/settings", label: "Settings", icon: <Settings size={18} /> },
+    { to: "/admin/analytics", label: "Analytics", icon: <BarChart size={18} /> },
+    { to: "/admin/audit-logs", label: "Audit Logs", icon: <ClipboardList size={18} /> }
+
+
   ];
 
   return (
@@ -24,16 +36,20 @@ export default function AdminSidebar({ isOpen, setIsOpen }) {
       <ul className="nav flex-column">
         {links.map((link) => (
           <li key={link.to} className="nav-item mb-2">
-            <NavLink
-              to={link.to}
-              className={({ isActive }) =>
-                `nav-link d-flex align-items-center gap-2 ${isActive ? "active text-warning" : "text-white"}`
-              }
-            >
+            <NavLink to={link.to} className={({ isActive }) =>
+              `nav-link d-flex align-items-center gap-2 ${isActive ? "active text-warning" : "text-white"}`}>
               {link.icon} {link.label}
             </NavLink>
           </li>
         ))}
+
+        {/* Logout Button */}
+        <li className="nav-item mt-4">
+          <button
+            className="btn btn-outline-light w-100 d-flex align-items-center gap-2" onClick={logout}>
+            <LogOut size={18} /> Logout
+          </button>
+        </li>
       </ul>
     </div>
   );

@@ -17,6 +17,12 @@ import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
 import Users from "./pages/admin/Users";
+import Categories from './pages/admin/Categories';
+import Reports from './pages/admin/Reports';
+import Settings from './pages/admin/Settings';
+import AdminAnalytics from './components/admin/AdminAnalytics';
+import AuditLogs  from './pages/admin/AuditLogs'
+
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
@@ -39,19 +45,24 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* ✅ User Routes with UserLayout */}
-        <Route path="/"element={<UserLayout><Home /></UserLayout>}/>
-        <Route path="/product/:id"element={<UserLayout><ProductDetails /></UserLayout>}/>
-        <Route path="/cart"element={<UserLayout><Cart /></UserLayout>}/>
-        <Route path="/checkout"element={<UserLayout><ProtectedRoute><Checkout /></ProtectedRoute></UserLayout>}/>
-        <Route path="/login"element={<UserLayout><PublicRoute><Login /></PublicRoute></UserLayout>}/>
-        <Route path="/register"element={<UserLayout><PublicRoute><Register /></PublicRoute></UserLayout>}/>
-        <Route path="/profile"element={<UserLayout><ProtectedRoute><Profile /></ProtectedRoute></UserLayout>}/>
+        <Route path="/" element={<UserLayout><Home /></UserLayout>} />
+        <Route path="/product/:id" element={<UserLayout><ProductDetails /></UserLayout>} />
+        <Route path="/cart" element={<UserLayout><Cart /></UserLayout>} />
+        <Route path="/checkout" element={<UserLayout><ProtectedRoute><Checkout /></ProtectedRoute></UserLayout>} />
+        <Route path="/login" element={<UserLayout><PublicRoute><Login /></PublicRoute></UserLayout>} />
+        <Route path="/register" element={<UserLayout><PublicRoute><Register /></PublicRoute></UserLayout>} />
+        <Route path="/profile" element={<UserLayout><ProtectedRoute><Profile /></ProtectedRoute></UserLayout>} />
 
         {/* ✅ Admin Routes with AdminLayout */}
-        <Route path="/admin/dashboard"element={<ProtectedRoute adminOnly><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>}/>
-        <Route path="/admin/products"element={<ProtectedRoute adminOnly><AdminLayout><Products /></AdminLayout></ProtectedRoute>}/>
-        <Route path="/admin/orders"element={<ProtectedRoute adminOnly><AdminLayout><Orders /></AdminLayout></ProtectedRoute>}/>
-        <Route path="/admin/users"element={<ProtectedRoute adminOnly><AdminLayout><Users /></AdminLayout></ProtectedRoute>}/>
+        <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminLayout><Products /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminLayout><Orders /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminLayout><Users /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/settings" element={<ProtectedRoute adminOnly><AdminLayout><Settings /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/reports" element={<ProtectedRoute adminOnly><AdminLayout><Reports /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/categories" element={<ProtectedRoute adminOnly><AdminLayout><Categories /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/analytics" element={<ProtectedRoute adminOnly><AdminLayout>< AdminAnalytics /></AdminLayout></ProtectedRoute>} />
+        <Route path="/admin/audit-logs" element={<ProtectedRoute adminOnly><AdminLayout>< AuditLogs /></AdminLayout></ProtectedRoute>} />
 
         {/* Fallback */}
         <Route path="*" element={<NotFound />} />
