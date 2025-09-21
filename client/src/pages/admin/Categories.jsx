@@ -43,7 +43,7 @@ const Categories = () => {
       if (editingCategory) {
         // Agar edit mode me hai -> update API call
         await api.put(`/categories/${editingCategory._id}`, formData);
-         toast.success("Category is updated successfully");
+        toast.success("Category is updated successfully");
       } else {
         // Otherwise -> create API call
         await api.post("/categories", formData);
@@ -61,7 +61,7 @@ const Categories = () => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
         await api.delete(`categories/${id}`);
-         toast.success("Category is deleted successfully");
+        toast.success("Category is deleted successfully");
         fetchCategories(); // Refresh list
       } catch (err) {
         console.error("Error deleting category:", err.response?.data || err);
@@ -90,9 +90,7 @@ const Categories = () => {
           {/* Header with Add button */}
           <div className="d-flex justify-content-between align-items-center mb-3">
             <h4 className="mb-0">Manage Categories</h4>
-            <Button variant="primary" onClick={() => handleShow()}>
-              + Add Category
-            </Button>
+            <Button variant="primary" onClick={() => handleShow()}>+ Add Category</Button>
           </div>
 
           {/* Category Table */}
@@ -120,21 +118,8 @@ const Categories = () => {
                       <td>{cat.description}</td>
                       <td>{new Date(cat.createdAt).toLocaleDateString()}</td>
                       <td>
-                        <Button
-                          variant="warning"
-                          size="sm"
-                          className="me-2"
-                          onClick={() => handleShow(cat)}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDelete(cat._id)}
-                        >
-                          Delete
-                        </Button>
+                        <Button variant="warning" size="sm" className="me-2" onClick={() => handleShow(cat)}>Edit</Button>
+                        <Button variant="danger" size="sm" onClick={() => handleDelete(cat._id)} >Delete</Button>
                       </td>
                     </tr>
                   ))
@@ -163,36 +148,19 @@ const Categories = () => {
             {/* Category Name */}
             <Form.Group className="mb-3">
               <Form.Label>Category Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Enter category name"
-              />
+              <Form.Control type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Enter category name" />
             </Form.Group>
 
             {/* Category Description */}
             <Form.Group className="mb-3">
               <Form.Label>Description</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Enter description"
-              />
+              <Form.Control as="textarea" rows={3} name="description" value={formData.description} onChange={handleChange} placeholder="Enter description" />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            {editingCategory ? "Update" : "Save"}
-          </Button>
+          <Button variant="secondary" onClick={handleClose}>Cancel</Button>
+          <Button variant="primary" onClick={handleSubmit}>{editingCategory ? "Update" : "Save"}</Button>
         </Modal.Footer>
       </Modal>
     </div>

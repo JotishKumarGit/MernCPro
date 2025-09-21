@@ -4,22 +4,54 @@ import Category from '../models/Category.js';
 
 export const createProduct = async (req, res) => {
   try {
-    const { category } = req.body;
+    const { name, description, price, stock, category } = req.body;
 
-    //  Validate category first
+    // Validate category
     const categoryExists = await Category.findById(category);
     if (!categoryExists) {
       return res.status(400).json({ message: 'Invalid category ID' });
     }
 
-    //  Create product only after category is verified
+    // Check if image is uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: 'Image is required' });
+    }
+
+    // ✅ Create product with image path
     const product = new Product({
-      ...req.body,
+      name,
+      description,
+      price,
+      stock,
+      category,
+      image: `/uploads/${req.file.filename}`, // <-- IMPORTANT
       createdBy: req.user._id,
     });
 
     await product.save();
     res.status(201).json(product);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+//  Update product by ID (Admin only)
+export const updateProduct = async (req, res) => {
+  try {
+    const updatedFields = { ...req.body };
+
+    // If a new image is uploaded
+    if (req.file) {
+      updatedFields.image = `/uploads/${req.file.filename}`;
+    }
+
+    const product = await Product.findByIdAndUpdate(req.params.id, updatedFields, {
+      new: true,
+    });
+
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    res.status(200).json(product);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -35,11 +67,11 @@ export const getAllProducts = async (req, res) => {
     // ✅ Search by name or description
     const keyword = req.query.keyword
       ? {
-          $or: [
-            { name: { $regex: req.query.keyword, $options: 'i' } },
-            { description: { $regex: req.query.keyword, $options: 'i' } },
-          ],
-        }
+        $or: [
+          { name: { $regex: req.query.keyword, $options: 'i' } },
+          { description: { $regex: req.query.keyword, $options: 'i' } },
+        ],
+      }
       : {};
 
     // ✅ Category filter
@@ -108,19 +140,6 @@ export const getProductById = async (req, res) => {
   }
 };
 
-//  Update product by ID (Admin only)
-export const updateProduct = async (req, res) => {
-  try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-
-    res.status(200).json(product);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
 
 //  Delete product by ID (Admin only)
 export const deleteProduct = async (req, res) => {

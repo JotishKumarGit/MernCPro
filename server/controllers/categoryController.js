@@ -1,5 +1,4 @@
 // controllers/categoryController.js
-
 import Category from '../models/Category.js';
 
 // Create category (Admin only)

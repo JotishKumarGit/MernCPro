@@ -9,7 +9,7 @@ export const placeOrder = async (req, res) => {
 
     if (!orderItems || orderItems.length === 0) {
       return res.status(400).json({ message: 'No order items provided' });
-    }
+    } 
 
     // Check and update stock
     for (const item of orderItems) {

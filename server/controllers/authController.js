@@ -1,6 +1,5 @@
 import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
-// Other imports already present
 import crypto from 'crypto';
 
 // Helper: generate JWT token
@@ -47,9 +46,7 @@ export const registerUser = async (req, res) => {
       .json({
         success: true,
         message: "User registered successfully 🎉",
-        user: {id: user._id,name: user.name,email: user.email,role: user.role,
-          profilePic: user.profilePic,
-        },
+        user: {id: user._id,name: user.name,email: user.email,role: user.role,profilePic: user.profilePic,},
         token,
       });
   } catch (err) {

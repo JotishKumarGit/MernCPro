@@ -258,3 +258,12 @@ export const generateInvoice = async (req, res) => {
   }
 };
 
+// get all user 
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find().select("-password"); // don’t send password
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
