@@ -1,3 +1,4 @@
+// src/components/FiltersPanel.jsx
 import React, { useState, useEffect } from "react";
 
 export default function FiltersPanel({ query = {}, onChangeParam }) {
@@ -29,7 +30,7 @@ export default function FiltersPanel({ query = {}, onChangeParam }) {
   };
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 p-3 border rounded">
       <h5>Filters</h5>
 
       <div className="mb-2">

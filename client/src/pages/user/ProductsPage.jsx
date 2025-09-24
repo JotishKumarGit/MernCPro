@@ -1,66 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import api from '../api/api';
-import ProductCard from '../components/ui/ProductCard';
-import CategorySidebar from '../components/ui/CategorySidebar';
-import SearchBar from '../components/ui/SearchBar';
-import Pagination from '../components/ui/Pagination';
+// src/pages/ProductsPage.jsx
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import FiltersPanel from "../components/FiltersPanel";
+import api from "../api/apiClient";
 
-export default function ProductsPage(){
+export default function ProductsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [data, setData] = useState({ products: [], total:0, page:1, pages:1 });
-  const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
 
-  const fetchProducts = async () => {
-    setLoading(true);
-    try {
-      const qs = searchParams.toString();
-      const res = await api.get(`/products?${qs}`);
-      setData(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally { setLoading(false); }
+  // query params ko object me convert karo
+  const query = Object.fromEntries([...searchParams]);
+
+  // filters apply/update karna
+  const handleChangeParam = (key, value) => {
+    if (value) {
+      searchParams.set(key, value);
+    } else {
+      searchParams.delete(key);
+    }
+    setSearchParams(searchParams);
   };
 
-  useEffect(() => { fetchProducts(); }, [searchParams]);
-
-  const updateParam = (key, value) => {
-    const params = new URLSearchParams(searchParams);
-    if (!value) params.delete(key);
-    else params.set(key, value);
-    setSearchParams(params);
-  };
+  // products load karna
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await api.get(`/products?${searchParams.toString()}`);
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Failed to load products", err);
+      }
+    };
+    fetchProducts();
+  }, [searchParams]);
 
   return (
-    <div className="container mt-4">
-      <SearchBar initial={searchParams.get('keyword')||''} onSearch={(kw)=> updateParam('keyword', kw)} />
+    <div className="container my-4">
       <div className="row">
+        {/* Left side - Filters */}
         <div className="col-md-3">
-          <CategorySidebar selected={searchParams.get('category')} onSelect={(id)=> updateParam('category', id)} />
-          {/* FiltersPanel can go here */}
+          <FiltersPanel query={query} onChangeParam={handleChangeParam} />
         </div>
+
+        {/* Right side - Products list */}
         <div className="col-md-9">
-          <div className="d-flex justify-content-between mb-2">
-            <select value={searchParams.get('sort')||''}
-                    onChange={(e)=> updateParam('sort', e.target.value)}>
-              <option value=''>Sort</option>
-              <option value='priceAsc'>Price: Low to High</option>
-              <option value='priceDesc'>Price: High to Low</option>
-              <option value='newest'>Newest</option>
-            </select>
-          </div>
-
-          {loading ? <p>Loading...</p> :
-            <div className="row">
-              {data.products.map(p => (
+          <h4>Products</h4>
+          <div className="row">
+            {products.length > 0 ? (
+              products.map((p) => (
                 <div className="col-md-4 mb-3" key={p._id}>
-                  <ProductCard product={p} />
+                  <div className="card h-100">
+                    <img
+                      src={p.image || "https://via.placeholder.com/200"}
+                      className="card-img-top"
+                      alt={p.name}
+                    />
+                    <div className="card-body">
+                      <h6>{p.name}</h6>
+                      <p>₹{p.price}</p>
+                      <p>⭐ {p.rating}</p>
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
-          }
-
-          <Pagination page={data.page} pages={data.pages} onPage={(p)=> updateParam('page', p)} />
+              ))
+            ) : (
+              <p>No products found</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

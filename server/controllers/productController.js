@@ -2,6 +2,7 @@
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 
+// create product
 export const createProduct = async (req, res) => {
   try {
     const { name, description, price, stock, category } = req.body;
@@ -128,11 +129,10 @@ export const getAllProducts = async (req, res) => {
 // Get single product by ID
 export const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id).populate(
-      'createdBy',
-      'name email'
-    );
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    const product = await Product.findById(req.params.id)
+      .populate("createdBy", "name email")
+      .populate("category", "name description");
+    if (!product) return res.status(404).json({ message: "Product not found" });
 
     res.status(200).json(product);
   } catch (error) {

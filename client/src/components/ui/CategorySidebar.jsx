@@ -9,9 +9,7 @@ export default function CategorySidebar({ categories = [], selected = "", onSele
           className={`list-group-item ${!selected ? "active" : ""}`}
           style={{ cursor: "pointer" }}
           onClick={() => onSelect("")}
-        >
-          All
-        </li>
+        >All</li>
         {categories.map((c) => (
           <li
             key={c._id}

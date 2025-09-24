@@ -22,3 +22,11 @@ body.dark {
 .navbar-light {
   background-color: #f8f9fa !important;
 }
+
+/* navbar css  */
+@media (min-width: 992px) {
+  .navbar .dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+  }
+}

@@ -60,3 +60,21 @@ export const deleteCategory = async (req, res) => {
   }
 };
 
+// Get categories with their products
+export const getCategoriesWithProducts = async (req, res) => {
+  try {
+    const categories = await Category.find().sort({ name: 1 });
+
+    // Har category ke products fetch karo
+    const categoriesWithProducts = await Promise.all(
+      categories.map(async (cat) => {
+        const products = await Product.find({ category: cat._id }).limit(6);
+        return { ...cat.toObject(), products };
+      })
+    );
+
+    res.status(200).json(categoriesWithProducts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
