@@ -140,7 +140,6 @@ export const getProductById = async (req, res) => {
   }
 };
 
-
 //  Delete product by ID (Admin only)
 export const deleteProduct = async (req, res) => {
   try {

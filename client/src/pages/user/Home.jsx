@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import api from "../../api/apiClient";
-import SearchBar from "../../components/ui/SearchBar";
 import CategorySidebar from "../../components/ui/CategorySidebar";
 import FiltersPanel from "../../components/ui/FiltersPanel";
 import ProductCard from "../../components/ui/ProductCard";
 import Pagination from "../../components/ui/Pagination";
+import LoadingPage from '../../components/ui/LoaderPage';
+import baner_1 from '/baner_1.png';
+import baner_2 from '/baner_new_2.jpg';
+import baner_3 from '/baner_new_3.jpg';
 
 export default function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -75,75 +78,83 @@ export default function Home() {
   };
 
   return (
-    <div className="container mt-4">
-      <SearchBar initial={getParam("keyword")} onSearch={(kw) => updateParam("keyword", kw)} />
-      <div className="row">
-        <div className="col-md-3">
-          <CategorySidebar
-            categories={categories}
-            selected={getParam("category")}
-            onSelect={(id) => updateParam("category", id)}
-          />
-          <FiltersPanel
-            query={{
-              minPrice: getParam("minPrice"),
-              maxPrice: getParam("maxPrice"),
-              minRating: getParam("minRating"),
-              sort: getParam("sort"),
-            }}
-            onChangeParam={updateParam}
-          />
+    <div className="container-fluid p-0">
+      <div id="carouselExample" className="carousel slide">
+        <div className="carousel-inner">
+          <div className="carousel-item active">
+            <img src={baner_1} style={{height:'300px',width:'100%' }} className="d-block w-100" alt="..." />
+          </div>
+          <div className="carousel-item">
+            <img src={baner_2} style={{height:'300px',width:'100%' }} className="d-block w-100" alt="..." />
+          </div>
+          <div className="carousel-item">
+            <img src={baner_3} style={{height:'300px',width:'100%' }} className="d-block w-100" alt="..." />
+          </div>
         </div>
-
-        <div className="col-md-9">
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <div>
-              <strong>{data.total}</strong> results
-            </div>
-            <div>
-              {/* optional quick sort select */}
-            </div>
+        <button className="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+          <span className="carousel-control-prev-icon" aria-hidden="true" />
+          <span className="visually-hidden">Previous</span>
+        </button>
+        <button className="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+          <span className="carousel-control-next-icon" aria-hidden="true" />
+          <span className="visually-hidden">Next</span>
+        </button>
+      </div>
+      <div className="container mt-4">
+        <div className="row">
+          <div className="col-md-3">
+            <CategorySidebar categories={categories} selected={getParam("category")} onSelect={(id) => updateParam("category", id)} />
+            <FiltersPanel query={{ minPrice: getParam("minPrice"), maxPrice: getParam("maxPrice"), minRating: getParam("minRating"), sort: getParam("sort"), }} onChangeParam={updateParam} />
           </div>
 
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
+          <div className="col-md-9">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <strong>Total {data.total}</strong> results</div>
+              <div>
+                {/* optional quick sort select */}
+              </div>
+            </div>
+
+            {loading ? (
+              <LoadingPage />
+            ) : (
+              <div className="row g-3">
+                {data.products.map((p) => (
+                  <div className="col-md-4" key={p._id}>
+                    <ProductCard product={p} />
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="mt-3">
+              <Pagination page={data.page} pages={data.pages} onPage={(p) => updateParam("page", p)} />
+            </div>
+          </div>
+        </div>
+
+        {/* Category sections (horizontal rows) */}
+        <hr className="my-4" />
+        <h4>Top Categories</h4>
+        {categories.slice(0, 6).map((cat) => (
+          <section key={cat._id} className="mb-4">
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h5 className="mb-0">{cat.name}</h5>
+              <button className="btn btn-sm btn-link" onClick={() => updateParam("category", cat._id)}>
+                View more
+              </button>
+            </div>
             <div className="row g-3">
-              {data.products.map((p) => (
-                <div className="col-md-4" key={p._id}>
+              {(catProducts[cat._id] || []).map((p) => (
+                <div className="col-6 col-md-3" key={p._id}>
                   <ProductCard product={p} />
                 </div>
               ))}
             </div>
-          )}
+          </section>
+        ))}
 
-          <div className="mt-3">
-            <Pagination page={data.page} pages={data.pages} onPage={(p) => updateParam("page", p)} />
-          </div>
-        </div>
       </div>
-
-      {/* Category sections (horizontal rows) */}
-      <hr className="my-4" />
-      <h4>Top Categories</h4>
-      {categories.slice(0, 6).map((cat) => (
-        <section key={cat._id} className="mb-4">
-          <div className="d-flex justify-content-between align-items-center mb-2">
-            <h5 className="mb-0">{cat.name}</h5>
-            <button className="btn btn-sm btn-link" onClick={() => updateParam("category", cat._id)}>
-              View more
-            </button>
-          </div>
-          <div className="row g-3">
-            {(catProducts[cat._id] || []).map((p) => (
-              <div className="col-6 col-md-3" key={p._id}>
-                <ProductCard product={p} />
-              </div>
-            ))}
-          </div>
-        </section>
-      ))}
-
     </div>
   );
 }

@@ -33,32 +33,19 @@ function Header() {
       {/* 🔹 Topbar */}
       <div className="bg-light border-bottom small py-1 px-3 d-flex justify-content-between align-items-center">
         <span>📧 support@trade4export.com | 📞 +91 98765 43210</span>
-        <span>
-          <Link to="/help" className="text-decoration-none text-muted">
-            Help
-          </Link>
-        </span>
+        <span><Link to="/help" className="text-decoration-none text-muted"> Help </Link></span>
       </div>
 
       {/* 🔹 Main Navbar */}
       <nav
-        className={`navbar navbar-expand-lg shadow-sm py-3 ${
-          theme === "dark" ? "navbar-dark bg-dark" : "navbar-light bg-white"
-        } px-3`}
+        className={`navbar navbar-expand-lg shadow-sm py-3 ${theme === "dark" ? "navbar-dark bg-dark" : "navbar-light bg-white"} px-3`}
       >
         <div className="container-fluid">
           {/* Brand */}
-          <Link className="navbar-brand fw-bold text-primary fs-4" to="/">
-            Apna Store
-          </Link>
+          <Link className="navbar-brand fw-bold text-primary fs-4" to="/">Apna Store</Link>
 
           {/* Toggler for mobile */}
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span className="navbar-toggler-icon"></span>
           </button>
 
@@ -66,24 +53,10 @@ function Header() {
             {/* 🔹 Right Side (Search + Cart + Theme + Auth) */}
             <div className="d-flex align-items-center ms-auto">
               {/* Search bar */}
-              <form
-                className="d-flex me-3"
-                style={{ maxWidth: "300px" }}
-                onSubmit={handleSearch}
-              >
+              <form className="d-flex me-3" style={{ maxWidth: "300px" }} onSubmit={handleSearch}>
                 <input
-                  className="form-control rounded-start-pill"
-                  type="search"
-                  placeholder="Search products..."
-                  value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
-                <button
-                  className="btn btn-primary rounded-end-pill"
-                  type="submit"
-                >
-                  🔍
-                </button>
+                  className="form-control rounded-start-pill" type="search" placeholder="Search products..." value={searchText} onChange={(e) => setSearchText(e.target.value)} />
+                <button className="btn btn-primary rounded-end-pill" type="submit">🔍</button>
               </form>
 
               {/* Cart */}
@@ -95,10 +68,7 @@ function Header() {
               </Link>
 
               {/* Theme Toggle */}
-              <button
-                className="btn btn-outline-secondary btn-sm me-3"
-                onClick={toggleTheme}
-              >
+              <button className="btn btn-outline-secondary btn-sm me-3" onClick={toggleTheme}>
                 {theme === "dark" ? (
                   <CiDark size={28} />
                 ) : (
@@ -118,22 +88,10 @@ function Header() {
                 </>
               ) : (
                 <li className="nav-item dropdown list-unstyled">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                  >
+                  <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" >
                     <img
-                      src={
-                        user?.profilePic ||
-                        "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                      }
-                      alt="avatar"
-                      width="30"
-                      height="30"
-                      className="rounded-circle"
-                    />
+                      src={user?.profilePic || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
+                      alt="avatar" width="30" height="30" className="rounded-circle" />
                   </a>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li>
@@ -143,18 +101,14 @@ function Header() {
                     </li>
                     {user?.role === "admin" && (
                       <li>
-                        <Link className="dropdown-item" to="/admin/dashboard">
-                          Admin Panel
-                        </Link>
+                        <Link className="dropdown-item" to="/admin/dashboard">Admin Panel</Link>
                       </li>
                     )}
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <button className="dropdown-item" onClick={logout}>
-                        Logout
-                      </button>
+                      <button className="dropdown-item" onClick={logout}>Logout</button>
                     </li>
                   </ul>
                 </li>
