@@ -2,6 +2,7 @@
 import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 
+
 // create product
 export const createProduct = async (req, res) => {
   try {
@@ -36,6 +37,76 @@ export const createProduct = async (req, res) => {
   }
 };
 
+// Get all products with search, filter, pagination, sorting
+export const getAllProducts = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 0; // 0 means no limit
+    const skip = limit > 0 ? (page - 1) * limit : 0;
+
+    const keyword = req.query.keyword
+      ? {
+          $or: [
+            { name: { $regex: req.query.keyword, $options: "i" } },
+            { description: { $regex: req.query.keyword, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const categoryFilter = req.query.category
+      ? { category: req.query.category }
+      : {};
+
+    const minPrice = req.query.minPrice ? Number(req.query.minPrice) : 0;
+    const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : Infinity;
+    const priceFilter = {
+      price: { $gte: minPrice, $lte: maxPrice },
+    };
+
+    const ratingFilter = req.query.minRating
+      ? { averageRating: { $gte: Number(req.query.minRating) } }
+      : {};
+
+    let sort = {};
+    if (req.query.sort === "priceAsc") sort.price = 1;
+    else if (req.query.sort === "priceDesc") sort.price = -1;
+    else if (req.query.sort === "newest") sort.createdAt = -1;
+    else if (req.query.sort === "oldest") sort.createdAt = 1;
+
+    const filterQuery = {
+      ...keyword,
+      ...categoryFilter,
+      ...priceFilter,
+      ...ratingFilter,
+    };
+
+    const total = await Product.countDocuments(filterQuery);
+
+    let query = Product.find(filterQuery)
+      .populate("createdBy", "name email")
+      .populate("category", "name")
+      .sort(sort)
+      .skip(skip);
+
+    if (limit > 0) {
+      query = query.limit(limit);
+    }
+
+    const products = await query;
+
+    res.status(200).json({
+      total,
+      page,
+      pages: limit > 0 ? Math.ceil(total / limit) : 1,
+      products,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
 //  Update product by ID (Admin only)
 export const updateProduct = async (req, res) => {
   try {
@@ -58,73 +129,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-// Get all products with search, filter, pagination, sorting
-export const getAllProducts = async (req, res) => {
-  try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
 
-    // ✅ Search by name or description
-    const keyword = req.query.keyword
-      ? {
-        $or: [
-          { name: { $regex: req.query.keyword, $options: 'i' } },
-          { description: { $regex: req.query.keyword, $options: 'i' } },
-        ],
-      }
-      : {};
-
-    // ✅ Category filter
-    const categoryFilter = req.query.category
-      ? { category: req.query.category }
-      : {};
-
-    // ✅ Price filter
-    const minPrice = req.query.minPrice ? Number(req.query.minPrice) : 0;
-    const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : Infinity;
-    const priceFilter = {
-      price: { $gte: minPrice, $lte: maxPrice },
-    };
-
-    // ✅ Rating filter
-    const ratingFilter = req.query.minRating
-      ? { averageRating: { $gte: Number(req.query.minRating) } }
-      : {};
-
-    // ✅ Sorting
-    let sort = {};
-    if (req.query.sort === 'priceAsc') sort.price = 1;
-    else if (req.query.sort === 'priceDesc') sort.price = -1;
-    else if (req.query.sort === 'newest') sort.createdAt = -1;
-    else if (req.query.sort === 'oldest') sort.createdAt = 1;
-
-    // ✅ Final Query
-    const filterQuery = {
-      ...keyword,
-      ...categoryFilter,
-      ...priceFilter,
-      ...ratingFilter,
-    };
-
-    const total = await Product.countDocuments(filterQuery);
-    const products = await Product.find(filterQuery)
-      .populate('createdBy', 'name email')
-      .populate('category', 'name')
-      .sort(sort)
-      .skip(skip)
-      .limit(limit);
-
-    res.status(200).json({
-      total,
-      page,
-      pages: Math.ceil(total / limit),
-      products,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
 
 // Get single product by ID
 export const getProductById = async (req, res) => {
