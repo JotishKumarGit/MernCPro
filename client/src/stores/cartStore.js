@@ -1,30 +1,64 @@
 import { create } from "zustand";
+import api from './../api/apiClient'; // 
 
-export const useCartStore = create(set => ({
-  items: JSON.parse(localStorage.getItem("cart")) || [],
+export const useCartStore = create((set) => ({
+  items: [],
+  totalPrice: 0,
+  loading: false,
+  error: null,
 
-  addToCart: (product, qty = 1) => set(state => {
-    const existing = state.items.find(i => i._id === product._id);
-    let updatedCart;
-    if (existing) {
-      updatedCart = state.items.map(i =>
-        i._id === product._id ? { ...i, qty: i.qty + qty } : i
-      );
-    } else {
-      updatedCart = [...state.items, { ...product, qty }];
+  // 🟢 Fetch Cart
+  fetchCart: async () => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await api.get("/cart");
+      set({ items: data.items, totalPrice: data.totalPrice, loading: false });
+    } catch (err) {
+      set({ error: err.response?.data?.message || "Failed to fetch cart", loading: false });
     }
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    return { items: updatedCart };
-  }),
+  },
 
-  removeFromCart: (id) => set(state => {
-    const updatedCart = state.items.filter(i => i._id !== id);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    return { items: updatedCart };
-  }),
+  // 🟢 Add to Cart
+  addToCart: async (productId, qty = 1) => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await api.post("/cart/add", { productId, quantity: qty });
+      set({ items: data.items, totalPrice: data.totalPrice, loading: false });
+    } catch (err) {
+      set({ error: err.response?.data?.message || "Failed to add item", loading: false });
+    }
+  },
 
-  clearCart: () => {
-    localStorage.removeItem("cart");
-    set({ items: [] });
-  }
+  // ✏️ Update quantity
+  updateQuantity: async (productId, qty) => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await api.put("/cart/update", { productId, quantity: qty });
+      set({ items: data.items, totalPrice: data.totalPrice, loading: false });
+    } catch (err) {
+      set({ error: err.response?.data?.message || "Failed to update item", loading: false });
+    }
+  },
+
+  // ❌ Remove item
+  removeFromCart: async (productId) => {
+    set({ loading: true, error: null });
+    try {
+      const { data } = await api.delete(`/cart/remove/${productId}`);
+      set({ items: data.items, totalPrice: data.totalPrice, loading: false });
+    } catch (err) {
+      set({ error: err.response?.data?.message || "Failed to remove item", loading: false });
+    }
+  },
+
+  // 🗑 Clear cart
+  clearCart: async () => {
+    set({ loading: true, error: null });
+    try {
+      await api.delete("/cart/clear");
+      set({ items: [], totalPrice: 0, loading: false });
+    } catch (err) {
+      set({ error: err.response?.data?.message || "Failed to clear cart", loading: false });
+    }
+  },
 }));

@@ -2,19 +2,27 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { useCartStore } from "../../stores/cartStore"; // ✅ import cart store
 
 export default function ProductCard({ product }) {
   const imageSrc = product.image
     ? `http://localhost:5000${product.image}`
     : "/placeholder.png";
 
+  const { addToCart, loading } = useCartStore(); // ✅ zustand hook
+
   useEffect(() => {
     AOS.init({
       duration: 800,
-      once: true,   // ✅ animate ek hi baar hoga aur product hide nahi hoga
-      mirror: false // ✅ scroll back karne par dobara hide nahi hoga
+      once: true,
+      mirror: false,
     });
   }, []);
+
+  // 🟢 Add to Cart handler
+  const handleAdd = () => {
+    addToCart(product._id, 1);
+  };
 
   return (
     <div
@@ -36,14 +44,21 @@ export default function ProductCard({ product }) {
         <p className="mb-3 text-muted fs-6">₹{product.price}</p>
 
         <div className="mt-auto d-flex gap-2">
+          {/* View Button */}
           <Link
             to={`/product/${product._id}`}
             className="btn btn-sm btn-outline-primary w-100 rounded-pill"
           >
             View
           </Link>
-          <button className="btn btn-sm btn-primary w-100 rounded-pill">
-            Add
+
+          {/* Add Button */}
+          <button
+            onClick={handleAdd}
+            className="btn btn-sm btn-primary w-100 rounded-pill"
+            disabled={loading}
+          >
+            {loading ? "Adding..." : "Add"}
           </button>
         </div>
       </div>
