@@ -9,8 +9,9 @@ import { MdOutlineLightMode } from "react-icons/md";
 
 function Header() {
   const { user, logout } = useAuthStore();
-  const { cartItems } = useCartStore();
+  const { cartCount } = useCartStore();
   const { theme, toggleTheme } = useThemeStore();
+
 
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ function Header() {
     <>
       {/* 🔹 Topbar */}
       <div className="bg-light border-bottom small py-1 px-3 d-flex justify-content-between align-items-center">
-        <span>📧 support@trade4export.com | 📞 +91 98765 43210</span>
+        <span>📧 jotishk649@gmail.com | 📞 +91 7827710029</span>
         <span><Link to="/help" className="text-decoration-none text-muted"> Help </Link></span>
       </div>
 
@@ -63,7 +64,8 @@ function Header() {
               <Link className="nav-link position-relative me-3" to="/cart">
                 🛒
                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {cartItems?.length || 0}
+                  {/* {cartItems?.length || 0} */}
+                  {cartCount()}
                 </span>
               </Link>
 

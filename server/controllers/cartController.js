@@ -1,17 +1,24 @@
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
 
+// helper: make absolute URL for image
+const makeAbsoluteImageUrl = (req, imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith("http")) return imagePath; // already absolute
+  const host = `${req.protocol}://${req.get("host")}`; // e.g. http://localhost:5000
+  return imagePath.startsWith("/") ? `${host}${imagePath}` : `${host}/${imagePath}`;
+};
+
 // Add to Cart
 export const addToCart = async (req, res) => {
   try {
-    const userId = req.user.id; // middleware se aayega
+    const userId = req.user.id;
     const { productId, quantity } = req.body;
 
     const product = await Product.findById(productId);
     if (!product) return res.status(404).json({ message: "Product not found" });
 
     let cart = await Cart.findOne({ user: userId });
-
     if (!cart) {
       cart = new Cart({ user: userId, items: [], totalPrice: 0 });
     }
@@ -30,32 +37,45 @@ export const addToCart = async (req, res) => {
       });
     }
 
-    // total price calculate
     cart.totalPrice = cart.items.reduce(
       (sum, item) => sum + item.quantity * item.price,
       0
     );
 
     await cart.save();
-    res.json(cart);
+
+    // re-fetch populated cart as plain object and convert image paths
+    const populated = await Cart.findOne({ user: userId }).populate("items.product").lean();
+    if (populated && populated.items) {
+      populated.items.forEach((it) => {
+        if (it.product) it.product.image = makeAbsoluteImageUrl(req, it.product.image);
+      });
+    }
+
+    res.json(populated || { items: [], totalPrice: 0 });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// 📌 Get Cart
+// Get Cart
 export const getCart = async (req, res) => {
   try {
     const userId = req.user.id;
-    const cart = await Cart.findOne({ user: userId }).populate("items.product");
+    const cart = await Cart.findOne({ user: userId }).populate("items.product").lean();
     if (!cart) return res.json({ items: [], totalPrice: 0 });
+
+    cart.items.forEach((it) => {
+      if (it.product) it.product.image = makeAbsoluteImageUrl(req, it.product.image);
+    });
+
     res.json(cart);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// ✏️ Update Item Quantity
+// Update Item Quantity
 export const updateCartItem = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -64,9 +84,7 @@ export const updateCartItem = async (req, res) => {
     let cart = await Cart.findOne({ user: userId });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-    const item = cart.items.find(
-      (item) => item.product.toString() === productId
-    );
+    const item = cart.items.find((item) => item.product.toString() === productId);
     if (!item) return res.status(404).json({ message: "Item not found in cart" });
 
     item.quantity = quantity;
@@ -77,13 +95,21 @@ export const updateCartItem = async (req, res) => {
     );
 
     await cart.save();
-    res.json(cart);
+
+    const populated = await Cart.findOne({ user: userId }).populate("items.product").lean();
+    if (populated && populated.items) {
+      populated.items.forEach((it) => {
+        if (it.product) it.product.image = makeAbsoluteImageUrl(req, it.product.image);
+      });
+    }
+
+    res.json(populated || { items: [], totalPrice: 0 });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// ❌ Remove Item
+// Remove Item
 export const removeCartItem = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -92,23 +118,26 @@ export const removeCartItem = async (req, res) => {
     let cart = await Cart.findOne({ user: userId });
     if (!cart) return res.status(404).json({ message: "Cart not found" });
 
-    cart.items = cart.items.filter(
-      (item) => item.product.toString() !== productId
-    );
+    cart.items = cart.items.filter((item) => item.product.toString() !== productId);
 
-    cart.totalPrice = cart.items.reduce(
-      (sum, item) => sum + item.quantity * item.price,
-      0
-    );
+    cart.totalPrice = cart.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
     await cart.save();
-    res.json(cart);
+
+    const populated = await Cart.findOne({ user: userId }).populate("items.product").lean();
+    if (populated && populated.items) {
+      populated.items.forEach((it) => {
+        if (it.product) it.product.image = makeAbsoluteImageUrl(req, it.product.image);
+      });
+    }
+
+    res.json(populated || { items: [], totalPrice: 0 });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// 🗑 Clear Cart
+// Clear Cart
 export const clearCart = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -119,7 +148,8 @@ export const clearCart = async (req, res) => {
     cart.totalPrice = 0;
 
     await cart.save();
-    res.json({ message: "Cart cleared successfully" });
+    // return consistent empty cart structure
+    res.json({ items: [], totalPrice: 0 });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

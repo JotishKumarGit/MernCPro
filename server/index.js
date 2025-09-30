@@ -42,7 +42,7 @@ app.use('/api/products', productsRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/cartRoutes', cartRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Connect to DB and start server
 connectDb();
