@@ -79,6 +79,7 @@ export default function Home() {
 
   return (
     <div className="container-fluid p-0">
+
       <div id="carouselExample" className="carousel slide">
         <div className="carousel-inner">
           <div className="carousel-item active">
@@ -100,6 +101,7 @@ export default function Home() {
           <span className="visually-hidden">Next</span>
         </button>
       </div>
+      
       <div className="container mt-4">
         <div className="row">
           <div className="col-md-3">
