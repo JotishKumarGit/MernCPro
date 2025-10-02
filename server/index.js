@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import bodyParser from "body-parser";
 import cors from 'cors';
 import path from "path";
 import { fileURLToPath } from "url";
@@ -12,6 +13,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import paymentRoutes  from './routes/paymentRoutes.js';
 
 dotenv.config();
 
@@ -37,12 +39,15 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
-app.use('/api/auth', authRoutes); 
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/cart', cartRoutes);
+// ✅ Special webhook route (raw body)
+// app.use("/api/payment/razorpay/webhook", bodyParser.raw({ type: "application/json" }), paymentRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Connect to DB and start server
 connectDb();

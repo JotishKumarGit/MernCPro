@@ -12,7 +12,6 @@ function Header() {
   const { cartCount } = useCartStore();
   const { theme, toggleTheme } = useThemeStore();
 
-
   const [searchText, setSearchText] = useState("");
   const navigate = useNavigate();
 
@@ -96,11 +95,11 @@ function Header() {
                       alt="avatar" width="30" height="30" className="rounded-circle" />
                   </a>
                   <ul className="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <Link className="dropdown-item" to="/profile">
-                        Profile
-                      </Link>
-                    </li>
+                    {user.role === "user" && (
+                      <li>
+                        <Link className="dropdown-item" to="/profile">User Dashboard</Link>
+                      </li>
+                    )}
                     {user?.role === "admin" && (
                       <li>
                         <Link className="dropdown-item" to="/admin/dashboard">Admin Panel</Link>

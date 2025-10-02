@@ -14,12 +14,9 @@ router.put('/reset-password/:token', resetPassword);
 router.get('/profile', protect, getProfile);
 router.put('/update-profile', protect, upload.single('profilePic'), updateProfile);
 
-
 // Wishlist routes
 router.post('/wishlist/:productId', protect, toggleWishlist);
 router.get('/wishlist', protect, getMyWishlist);
 router.delete('/wishlist/:productId', protect, removeFromWishlist);
-
-
 
 export default router;
