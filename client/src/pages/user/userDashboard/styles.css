@@ -1,28 +1,146 @@
-/* 🔹 Dashboard Layout Enhancements */
-.sidebar {
+/* styles.css - shared dashboard styles */
+
+/* Sidebar base */
+.dashboard-sidebar {
   width: 250px;
-  transition: all 0.3s ease;
+  transition: transform 0.28s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s;
+  transform: translateX(0);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
-.nav-link {
-  color: rgba(255, 255, 255, 0.7);
-  transition: background-color 0.2s, color 0.2s;
+.dashboard-sidebar .nav-link {
+  color: rgba(255,255,255,0.85);
+  transition: background-color 0.15s, color 0.15s, padding-left 0.18s;
 }
-.nav-link:hover {
-  color: #fff;
-  background-color: rgba(255, 255, 255, 0.1);
+.dashboard-sidebar .nav-link:hover {
+  background-color: rgba(255,255,255,0.06);
+  padding-left: 1.4rem;
 }
 .active-nav {
   color: #fff !important;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255,255,255,0.08);
   font-weight: 600;
 }
-.dashboard-topbar {
-  z-index: 1045; /* ensures topbar stays above sidebar */
+
+/* Mobile: hide by translating left when closed */
+.dashboard-sidebar {
+  position: relative;
+  z-index: 1040;
 }
+.dashboard-sidebar.open {
+  transform: translateX(0);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+/* When narrower than lg, hide sidebar by default */
+@media (max-width: 991.98px) {
+  .dashboard-sidebar {
+    position: fixed;
+    top: 60px; /* below topbar */
+    left: 0;
+    bottom: 0;
+    transform: translateX(-110%);
+    width: 78%;
+    max-width: 320px;
+    overflow-y: auto;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .dashboard-sidebar.open { transform: translateX(0); }
+}
+
+/* Topbar control */
+.dashboard-topbar {
+  z-index: 1050; /* top */
+  transition: box-shadow 0.2s;
+}
+.dashboard-topbar.scrolled {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+/* main content animations */
 .dashboard-content {
-  animation: fadeIn 0.3s ease-in;
+  animation: fadeIn 0.28s ease-in;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* small animated card style */
+.animated-card { transition: transform .18s ease, box-shadow .18s ease; }
+.animated-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,0,0,0.06); }
+
+/* ===== Custom modal styles ===== */
+.custom-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1060;
+  animation: backdropFade .16s ease;
+}
+@keyframes backdropFade { from { opacity: 0 } to { opacity: 1 } }
+
+.custom-modal {
+  background: #fff;
+  width: 100%;
+  max-width: 900px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+  transform: translateY(10px);
+  animation: modalIn .18s cubic-bezier(.2,.9,.3,1) forwards;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+}
+@keyframes modalIn { to { transform: translateY(0); } }
+
+.custom-modal-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.custom-modal-header .btn-close { margin-left: auto; border: none; background: transparent; font-size: 1.1rem; }
+
+.custom-modal-body {
+  padding: 1rem 1.25rem;
+  overflow: auto;
+  background: linear-gradient(180deg,#fff,#fbfbff);
+}
+
+.custom-modal-footer {
+  padding: 0.9rem 1.25rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* Invoice specific style for better PDF capture */
+.invoice-card {
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #efefef;
+}
+.invoice-card h6 { margin: 0; }
+
+/* responsive table tweaks */
+.table-responsive { overflow-x:auto; }
+
+/* small screens modal full width */
+@media (max-width: 575.98px) {
+  .custom-modal { max-width: 100%; height: auto; border-radius: 8px; }
+}
+
+/* accessibility: focus states */
+.nav-link:focus, .btn:focus, .custom-modal .btn-close:focus {
+  outline: 3px solid rgba(99,102,241,0.18);
+  outline-offset: 2px;
 }

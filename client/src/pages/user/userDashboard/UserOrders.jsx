@@ -1,9 +1,15 @@
-// src/pages/userDashboard/UserOrders.jsx
 import React, { useEffect, useState } from "react";
 import api from "../../../api/apiClient";
 import OrderDetailModal from "./OrderDetailModal";
 import LoadingPage from "../../../components/ui/LoaderPage";
+import { toast } from "react-toastify";
 
+/*
+  Orders list:
+  - Fetches /orders/my-orders and displays table.
+  - Opens custom centered modal for order details.
+  - When modal closes we reload orders (so status updates reflect).
+*/
 export default function UserOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -12,20 +18,17 @@ export default function UserOrders() {
   const load = async () => {
     try {
       setLoading(true);
-      // backend route you posted: GET /my-orders within orders router
       const { data } = await api.get("/orders/my-orders");
-      // backend may return either an array or { orders: [...] }
       setOrders(data.orders || data || []);
     } catch (err) {
       console.error("fetch orders error", err);
+      toast.error("Failed to fetch orders");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
   if (loading) return <LoadingPage />;
 
@@ -51,7 +54,7 @@ export default function UserOrders() {
               {orders.map((o, i) => (
                 <tr key={o._id}>
                   <td>{i + 1}</td>
-                  <td>{o._id}</td>
+                  <td className="text-truncate" style={{ maxWidth: 160 }}>{o._id}</td>
                   <td>₹{o.totalAmount}</td>
                   <td>{o.status}</td>
                   <td>{new Date(o.createdAt).toLocaleString()}</td>
@@ -67,6 +70,7 @@ export default function UserOrders() {
         </div>
       )}
 
+      {/* If selected, show modal. When closed, also reload orders. */}
       <OrderDetailModal order={selected} onClose={() => { setSelected(null); load(); }} />
     </div>
   );

@@ -1,14 +1,28 @@
-// src/components/layout/UserDashboardLayout.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../stores/authStore";
 import { FaBars, FaUserCircle, FaSignOutAlt, FaCog, FaBox, FaUser } from "react-icons/fa";
-import './styles.css';
+import './styles.css'; // contains shared dashboard styles (provided below)
 
+/*
+  Dashboard layout
+  - Controls sidebar open/close via React state (works reliably on mobile)
+  - Fixed topbar
+  - Offcanvas for small screens (class toggling) and fixed sidebar for large screens
+  - Uses NavLink for active link styling
+*/
 export default function DashboardLayout() {
     const { user, logout } = useAuthStore();
     const navigate = useNavigate();
-    const [isOffcanvasOpen, setIsOffcanvasOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    // Close sidebar on route change for better mobile UX
+    useEffect(() => {
+        const closeOnNavigation = () => setSidebarOpen(false);
+        // listen for popstate (back/forward) or you can use React Router hooks in parent
+        window.addEventListener("popstate", closeOnNavigation);
+        return () => window.removeEventListener("popstate", closeOnNavigation);
+    }, []);
 
     const handleLogout = () => {
         logout();
@@ -17,23 +31,22 @@ export default function DashboardLayout() {
 
     return (
         <div className="dashboard-wrapper d-flex flex-column vh-100">
-            {/* 🔹 Fixed Topbar */}
+            {/* Topbar */}
             <nav className="dashboard-topbar navbar navbar-light bg-white shadow-sm px-3 py-2 fixed-top d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center gap-3">
-                    {/* Toggle Sidebar Button for Mobile */}
+                    {/* Mobile: toggle sidebar */}
                     <button
                         className="btn btn-outline-secondary d-lg-none"
                         type="button"
-                        data-bs-toggle="offcanvas"
-                        data-bs-target="#dashboardSidebar"
-                        onClick={() => setIsOffcanvasOpen(!isOffcanvasOpen)}
+                        onClick={() => setSidebarOpen(prev => !prev)}
+                        aria-label={sidebarOpen ? "Close menu" : "Open menu"}
                     >
                         <FaBars />
                     </button>
                     <h5 className="mb-0 fw-semibold">User Dashboard</h5>
                 </div>
 
-                {/* Profile Avatar in Topbar */}
+                {/* Profile Dropdown (desktop) */}
                 <div className="dropdown">
                     <button
                         className="btn btn-light d-flex align-items-center gap-2 dropdown-toggle border-0"
@@ -42,10 +55,7 @@ export default function DashboardLayout() {
                         aria-expanded="false"
                     >
                         <img
-                            src={
-                                user?.profilePic ||
-                                "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                            }
+                            src={user?.profilePic || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"}
                             alt="avatar"
                             width={36}
                             height={36}
@@ -53,32 +63,20 @@ export default function DashboardLayout() {
                         />
                         <span className="fw-medium d-none d-md-inline">{user?.name || "User"}</span>
                     </button>
-                    <ul
-                        className="dropdown-menu dropdown-menu-end shadow-sm"
-                        aria-labelledby="userDropdown"
-                    >
+                    <ul className="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="userDropdown">
                         <li>
-                            <button
-                                className="dropdown-item d-flex align-items-center gap-2"
-                                onClick={() => navigate("/user/dashboard")}
-                            >
+                            <button className="dropdown-item d-flex align-items-center gap-2" onClick={() => navigate("/user/dashboard")}>
                                 <FaUser /> Profile
                             </button>
                         </li>
                         <li>
-                            <button
-                                className="dropdown-item d-flex align-items-center gap-2"
-                                onClick={() => navigate("/user/dashboard/settings")}
-                            >
+                            <button className="dropdown-item d-flex align-items-center gap-2" onClick={() => navigate("/user/dashboard/settings")}>
                                 <FaCog /> Settings
                             </button>
                         </li>
                         <li><hr className="dropdown-divider" /></li>
                         <li>
-                            <button
-                                className="dropdown-item text-danger d-flex align-items-center gap-2"
-                                onClick={handleLogout}
-                            >
+                            <button className="dropdown-item text-danger d-flex align-items-center gap-2" onClick={handleLogout}>
                                 <FaSignOutAlt /> Logout
                             </button>
                         </li>
@@ -86,94 +84,46 @@ export default function DashboardLayout() {
                 </div>
             </nav>
 
-            {/* 🔹 Sidebar + Main Area */}
+            {/* Sidebar + Main */}
             <div className="d-flex flex-grow-1 overflow-hidden" style={{ paddingTop: "60px" }}>
-                {/* Sidebar (Offcanvas for Mobile, Fixed for Desktop) */}
-                <div
-                    className="offcanvas-lg offcanvas-start bg-dark text-white sidebar transition-all"
-                    tabIndex="-1"
-                    id="dashboardSidebar"
-                    aria-labelledby="dashboardSidebarLabel"
-                >
-                    <div className="offcanvas-header border-bottom border-secondary">
-                        <h5 className="offcanvas-title" id="dashboardSidebarLabel">
-                            <img
-                                src={
-                                    user?.profilePic ||
-                                    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
-                                }
-                                alt="avatar"
-                                width={48}
-                                height={48}
-                                className="rounded-circle border me-2"
-                            />
-                            {user?.name || "User"}
-                        </h5>
-                        <button
-                            type="button"
-                            className="btn-close btn-close-white text-reset"
-                            data-bs-dismiss="offcanvas"
-                            aria-label="Close"
-                        ></button>
-                    </div>
-
-                    <div className="offcanvas-body p-0 d-flex flex-column">
-                        <ul className="nav flex-column mt-3">
-                            <li className="nav-item">
-                                <NavLink
-                                    to="/user/dashboard"
-                                    end
-                                    className={({ isActive }) =>
-                                        "nav-link px-4 py-2 d-flex align-items-center gap-2 " +
-                                        (isActive ? "active-nav" : "text-white-50")
-                                    }
-                                >
-                                    <FaUser /> Profile
-                                </NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <NavLink
-                                    to="/user/dashboard/orders"
-                                    className={({ isActive }) =>
-                                        "nav-link px-4 py-2 d-flex align-items-center gap-2 " +
-                                        (isActive ? "active-nav" : "text-white-50")
-                                    }
-                                >
-                                    <FaBox /> My Orders
-                                </NavLink>
-                            </li>
-                            <li className="nav-item">
-                                <NavLink
-                                    to="/user/dashboard/settings"
-                                    className={({ isActive }) =>
-                                        "nav-link px-4 py-2 d-flex align-items-center gap-2 " +
-                                        (isActive ? "active-nav" : "text-white-50")
-                                    }
-                                >
-                                    <FaCog /> Settings
-                                </NavLink>
-                            </li>
-                        </ul>
-
-                        <div className="mt-auto p-3 border-top border-secondary">
-                            <button
-                                onClick={handleLogout}
-                                className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2"
-                            >
-                                <FaSignOutAlt /> Logout
-                            </button>
+                {/* Sidebar: we toggle a class to show/hide for mobile */}
+                <aside className={`dashboard-sidebar bg-dark text-white ${sidebarOpen ? "open" : ""}`}>
+                    <div className="sidebar-header d-flex align-items-center gap-2 p-3 border-bottom border-secondary">
+                        <img src={user?.profilePic || "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"} alt="avatar" width={48} height={48} className="rounded-circle border" />
+                        <div>
+                            <div className="fw-bold">{user?.name || "User"}</div>
+                            <small className="text-muted d-block text-white-50">{user?.email}</small>
                         </div>
+                        {/* close button visible only on mobile sidebar */}
+                        <button className="btn-close btn-close-white ms-auto d-lg-none" onClick={() => setSidebarOpen(false)} aria-label="Close sidebar"></button>
                     </div>
-                </div>
 
-                {/* Main Content (scrollable only) */}
+                    <nav className="nav flex-column mt-3">
+                        <NavLink to="/user/dashboard" end className={({ isActive }) => "nav-link px-4 py-2 d-flex align-items-center gap-2 " + (isActive ? "active-nav" : "text-white-50")}>
+                            <FaUser /> Profile
+                        </NavLink>
+
+                        <NavLink to="/user/dashboard/orders" className={({ isActive }) => "nav-link px-4 py-2 d-flex align-items-center gap-2 " + (isActive ? "active-nav" : "text-white-50")}>
+                            <FaBox /> My Orders
+                        </NavLink>
+
+                        <NavLink to="/user/dashboard/settings" className={({ isActive }) => "nav-link px-4 py-2 d-flex align-items-center gap-2 " + (isActive ? "active-nav" : "text-white-50")}>
+                            <FaCog /> Settings
+                        </NavLink>
+                    </nav>
+
+                    <div className="mt-auto p-3 border-top border-secondary">
+                        <button onClick={handleLogout} className="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2">
+                            <FaSignOutAlt /> Logout
+                        </button>
+                    </div>
+                </aside>
+
+                {/* Main content */}
                 <main className="dashboard-content flex-grow-1 overflow-auto p-3 bg-light">
                     <Outlet />
                 </main>
             </div>
-
         </div>
     );
 }
-
-

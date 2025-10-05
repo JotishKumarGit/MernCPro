@@ -1,9 +1,15 @@
-// src/pages/userDashboard/UserProfile.jsx
 import React, { useEffect, useState } from "react";
 import api from "../../../api/apiClient";
 import { useAuthStore } from "../../../stores/authStore";
 import { toast } from "react-toastify";
 
+/*
+  Profile form:
+  - Loads user from auth store into local form state
+  - Supports file upload with multipart/form-data
+  - Calls PUT /auth/update-profile (your backend route)
+  - After success, calls initializeAuth() to refresh local auth state
+*/
 export default function UserProfile() {
   const { user, initializeAuth } = useAuthStore();
   const [form, setForm] = useState({ name: "", phone: "", profilePic: "" });
@@ -15,29 +21,22 @@ export default function UserProfile() {
   }, [user]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-
-  const handleFile = (e) => {
-    setFile(e.target.files[0]);
-  };
+  const handleFile = (e) => setFile(e.target.files[0]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-
-      // if uploading image use FormData and endpoint that accepts multipart/form-data
       const payload = new FormData();
       payload.append("name", form.name);
       payload.append("phone", form.phone || "");
       if (file) payload.append("profilePic", file);
 
-      // NOTE: backend auth router you provided has PUT '/update-profile'
       const { data } = await api.put("/auth/update-profile", payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
       toast.success("Profile updated");
-      // refresh local auth info
       initializeAuth();
     } catch (err) {
       console.error("Profile update error:", err);
@@ -48,7 +47,7 @@ export default function UserProfile() {
   };
 
   return (
-    <div className="card">
+    <div className="card animated-card">
       <div className="card-body">
         <h5>Profile</h5>
         <form onSubmit={handleSubmit}>
