@@ -97,7 +97,7 @@ function Header() {
                   <ul className="dropdown-menu dropdown-menu-end">
                     {user.role === "user" && (
                       <li>
-                        <Link className="dropdown-item" to="/profile">User Dashboard</Link>
+                        <Link className="dropdown-item" to="/user/dashboard/">User Dashboard</Link>
                       </li>
                     )}
                     {user?.role === "admin" && (

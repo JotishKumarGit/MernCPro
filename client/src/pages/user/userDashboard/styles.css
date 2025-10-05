@@ -1,0 +1,28 @@
+/* 🔹 Dashboard Layout Enhancements */
+.sidebar {
+  width: 250px;
+  transition: all 0.3s ease;
+}
+.nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: background-color 0.2s, color 0.2s;
+}
+.nav-link:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.active-nav {
+  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+}
+.dashboard-topbar {
+  z-index: 1045; /* ensures topbar stays above sidebar */
+}
+.dashboard-content {
+  animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

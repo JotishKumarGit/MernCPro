@@ -5,14 +5,15 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "aos/dist/aos.css";
 
+// public route 
 import Home from "./pages/user/Home";
 import ProductDetails from "./pages/user/ProductDetails";
 import Cart from "./pages/user/Cart";
 import Checkout from "./pages/user/Checkout";
 import Login from "./pages/user/Login";
 import Register from "./pages/user/Register";
-import Profile from "./pages/user/Profile";
 
+// only for admin 
 import Dashboard from "./pages/admin/Dashboard";
 import Products from "./pages/admin/Products";
 import Orders from "./pages/admin/Orders";
@@ -21,8 +22,13 @@ import Categories from './pages/admin/Categories';
 import Reports from './pages/admin/Reports';
 import Settings from './pages/admin/Settings';
 import AdminAnalytics from './components/admin/AdminAnalytics';
-import AuditLogs  from './pages/admin/AuditLogs'
+import AuditLogs from './pages/admin/AuditLogs'
 
+// user dashboard route 
+import DashboardLayout from "./pages/user/userDashboard/DashboardLayout";
+import UserProfile from "./pages/user/userDashboard/UserProfile";
+import UserOrders from "./pages/user/userDashboard/UserOrders";
+import UserSettings from "./pages/user/userDashboard/UserSettings";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
@@ -44,16 +50,23 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* ✅ User Routes with UserLayout */}
+        {/* User Routes with UserLayout */}
         <Route path="/" element={<UserLayout><Home /></UserLayout>} />
         <Route path="/product/:id" element={<UserLayout><ProductDetails /></UserLayout>} />
         <Route path="/cart" element={<UserLayout><Cart /></UserLayout>} />
         <Route path="/checkout" element={<UserLayout><ProtectedRoute><Checkout /></ProtectedRoute></UserLayout>} />
         <Route path="/login" element={<UserLayout><PublicRoute><Login /></PublicRoute></UserLayout>} />
         <Route path="/register" element={<UserLayout><PublicRoute><Register /></PublicRoute></UserLayout>} />
-        <Route path="/profile" element={<UserLayout><ProtectedRoute><Profile /></ProtectedRoute></UserLayout>} />
+        {/* <Route path="/profile" element={<UserLayout><ProtectedRoute><Profile /></ProtectedRoute></UserLayout>} /> */}
 
-        {/* ✅ Admin Routes with AdminLayout */}
+        {/* user dashboard route */}
+        <Route path="/user/dashboard/" element={<ProtectedRoute><DashboardLayout /> </ProtectedRoute>}>
+          <Route index element={<UserProfile />} />
+          <Route path="orders" element={<UserOrders />} />
+          <Route path="settings" element={<UserSettings />} />
+        </Route>
+
+        {/* Admin Routes with AdminLayout */}
         <Route path="/admin/dashboard" element={<ProtectedRoute adminOnly><AdminLayout><Dashboard /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/products" element={<ProtectedRoute adminOnly><AdminLayout><Products /></AdminLayout></ProtectedRoute>} />
         <Route path="/admin/orders" element={<ProtectedRoute adminOnly><AdminLayout><Orders /></AdminLayout></ProtectedRoute>} />
